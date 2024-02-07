@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <string.h>
+
+struct Prod{
+    char codigo[10];
+    char nome[50];
+    int quant;
+    float preco;
+    char estado[3];
+};
+
+void f1(char * fpath, int q,struct Prod p[]){
+    FILE *out = fopen(fpath,"w");
+    for(int n=0; n<q; n++){
+        for(int m=n+1; m<q; m++){
+            if(strcmp(p[n].nome,p[m].nome) > 0){
+                struct Prod temp = p[n];
+                p[n] = p[m];
+                p[m] = temp;
+            }
+        }
+    }
+    for(int j=0; j<q;j++){
+        fprintf(out,"%s\n", p[j].codigo);
+        fprintf(out,"%s\n", p[j].nome);
+        fprintf(out,"%d\n", p[j].quant);
+        fprintf(out,"%.2f\n", p[j].preco);
+        fprintf(out, "%s\n", p[j].estado);
+    }
+
+    fclose(out);
+}
+
+void f2(char *cod, int q, struct Prod p[q]){
+    for(int i=0; i<q; i++) {
+        if (!strcmp(cod, p[i].codigo)){
+            printf("%s\n%s\n%d\n%.2f\n%s\n", p[i].codigo, p[i].nome, p[i].quant, p[i].preco, p[i].estado);
+        }
+    }
+}
+
+void f3(int q,struct Prod p[q]){
+    int men_qt[q];
+    for(int i=0; i<q; i++){
+        men_qt[i] = p[i].quant;
+    }
+    int temp;
+    for(int j=0; j<q; j++){
+        for(int k=j+1; k<q; k++){
+            if(men_qt[j]>men_qt[k]){
+                temp = men_qt[j];
+                men_qt[j] = men_qt[k];
+                men_qt[k] = temp;
+            }
+        }
+    }
+    for(int r=0; r<q; r++){
+        if(men_qt[0] == p[r].quant) {
+            printf("%s\n", p[r].codigo);
+            printf("%s\n", p[r].nome);
+            printf("%d\n", p[r].quant);
+            printf("%.2f\n", p[r].preco);
+            printf("%s\n", p[r].estado);
+        }
+    }
+}
+
+void f4(int q,struct Prod p[],char * est){
+
+    for(int n=0; n<q; n++){
+        for(int m=n+1; m<q; m++){
+            if(strcmp(p[n].nome,p[m].nome) > 0){
+                struct Prod temp = p[n];
+                p[n] = p[m];
+                p[m] = temp;
+            }
+        }
+    }
+
+    for(int j = 0; j < q; j++){
+        if (!strcmp(est, p[j].estado))
+            printf("%s\n%s\n%d\n%.2f\n%s\n", p[j].codigo, p[j].nome, p[j].quant, p[j].preco, p[j].estado);
+    }
+}
+
+void f5(int q,struct Prod p[],char est[]){
+    int idxMin=-1;
+    for(int j = 0; j < q; j++){
+        if (strcmp(est, p[j].estado) == 0){
+            if (idxMin == -1)
+                idxMin = j ;
+
+            if(p[j].quant < p[idxMin].quant){
+                idxMin = j;
+            }
+        }
+    }
+
+    printf("%s\n%s\n%d\n%.2f\n%s\n", p[idxMin].codigo, p[idxMin].nome, p[idxMin].quant, p[idxMin].preco, p[idxMin].estado);
+
+    
+
+void f6(int q,struct Prod p[q]){
+    long int qt_prod = 0;
+    for(int i=0; i<q; i++){
+        qt_prod += p[i].quant;
+    }
+    printf("%ld\n", qt_prod);
+}
+
+int main(int argc, char **argv) {
+    FILE *in = fopen(argv[1], "r");
+    int q;
+    fscanf(in,"%d", &q);
+    struct Prod p[q];
+    for(int i=0; i<q; i++){
+        fscanf(in,"%s ", p[i].codigo);
+        fscanf(in,"%[^\n]%*c", p[i].nome);
+        fscanf(in,"%d", &p[i].quant);
+        fscanf(in,"%f", &p[i].preco);
+        fscanf(in, "%s", p[i].estado);
+    }
+
+    switch (*argv[2]){
+        case '1':
+            f1(argv[3], q, p);
+            break;
+        case '2':
+            f2(argv[3],q,p);
+            break;
+        case '3':
+            f3(q,p);
+            break;
+        case '4':
+            f4(q,p,argv[3]);
+            break;
+        case '5':
+            f5(q,p,argv[3]);
+            break;
+        case '6':
+            f6(q,p);
+            break;
+
+    }
+
+    fclose(in);
+    return 0;
+}
